@@ -6,7 +6,7 @@ use App\Controller\User as UserController;
 $path = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-$home_uri = "/diyet-takvimi";
+$home_uri = "/diyet_takvimi";
 $router = new Route($path, $method);
 
 $router->post($home_uri.'/giris', function(){

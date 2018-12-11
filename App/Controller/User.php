@@ -59,6 +59,8 @@ class User {
             }catch (\PDOException $e){
                 if($e->getCode() == 330320){
                     return print_r(json_encode(['success'=>false, 'error' => $e->getMessage()]));
+                }else if($e->getCode() == 2002){
+                    return print_r(json_encode(['success'=>false, 'error' => 'Bağlantı yok.']));
                 }
             }
 
