@@ -8,7 +8,7 @@ class Model{
 
     public function __construct(){
         $this->database = require(CONFIG.'database.php');
-        $dsn = "mysql:host={$this->database ['host']};charset=utf8;";
+        $dsn = "mysql:host={$this->database['host']};charset=utf8;";
         $user = $this->database['username'];
         $password = $this->database['password'];
         try {

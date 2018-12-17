@@ -17,4 +17,8 @@ $router->post($home_uri.'/kayit', function(){
     UserController::register($_POST);
 });
 
+$router->get($home_uri.'/', function(){
+    echo 'Hoşgeldin';
+});
+
 $router->run();
