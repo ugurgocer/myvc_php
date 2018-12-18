@@ -7,7 +7,6 @@ use App\Core\Validation;
 use App\Model\User as UserModel;
 
 class User {
-    
     public static function register($option){
         $inputOption = Helpers::inputFormat($option);
         $inputOption['gender'] = boolval($inputOption['gender']);
@@ -29,7 +28,7 @@ class User {
                 $inputOption['password'] = md5($inputOption['password']);
                 $sonuc = (new UserModel())->createUser($inputOption);
 
-                return print_r(json_encode(['success'=>true, 'result' => $sonuc]));
+                return print_r(json_encode(['success'=>true, 'result' => $sonuc, 'message' => 'Kullanıcı kaydı başarıyla tamamlandı.']));
             }catch (\PDOException $e){
                 if($e->errorInfo[0] == 23000){
                     return print_r(json_encode(['success'=>false, 'error' => "Bu kullanıcı adı kullanılıyor."]));
@@ -55,7 +54,7 @@ class User {
                 $inputOption['password'] = md5($inputOption['password']);
                 $sonuc = (new UserModel())->loginUser($inputOption);
 
-                return print_r(json_encode(['success'=>true, 'result' => $sonuc]));
+                return print_r(json_encode(['success'=>true, 'result' => $sonuc, 'message' => 'Giriş işlemi başarılı']));
             }catch (\PDOException $e){
                 if($e->getCode() == 330320){
                     return print_r(json_encode(['success'=>false, 'error' => $e->getMessage()]));
@@ -65,7 +64,29 @@ class User {
             }
 
         }catch (\Exception $e){
-            printf(json_encode(['success' => false, 'error' => 'Yanlış format']));
+            printf(json_encode(['success' => false, 'error' => $e->getCode()]));
+        }
+    }
+
+    public static function logout($option){
+        $user_id = $option['id'];
+
+        try{
+            (new UserModel())->deleteToken($user_id);
+
+            return print_r(json_encode(['success'=>true, 'message' => 'Hesabınızdan çıkış yapıldı.']));
+        }catch (\PDOException $e){
+            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
+        }
+    }
+
+    public static function user_page($token){
+        try{
+            $result = (new UserModel())->userRead($token);
+
+            return print_r(json_encode(['success'=>true, 'result' => $result, 'message' => 'Bilgileriniz başarıyla getirildi.']));
+        }catch (\Exception $e){
+            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
 }

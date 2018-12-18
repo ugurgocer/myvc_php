@@ -14,6 +14,7 @@ class Model{
         try {
             $this->db = new \PDO($dsn, $user, $password);
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $this->db->exec("set names utf8");
             $this->db->exec("CREATE DATABASE IF NOT EXISTS {$this->database['dbname']}");
             $this->db->exec("use {$this->database['dbname']}");
             return $this->db;
@@ -29,5 +30,15 @@ class Model{
                return false;
             return true;
         }
+    }
+
+    public function isUsable($token){
+        $sorgu = "SELECT user_id FROM tokens WHERE token = '{$token}'";
+
+        $obj = $this->db->query($sorgu)->fetchObject();
+
+        if(!$obj)
+            throw new \Exception("İzinsiz işlem");
+        return $obj->user_id;
     }
 }

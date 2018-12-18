@@ -17,4 +17,12 @@ $router->post($home_uri.'/kayit', function(){
     UserController::register($_POST);
 });
 
+$router->post($home_uri.'/cikis', function (){
+   UserController::logout($_POST);
+});
+
+$router->get($home_uri.'/user/([[:alnum:]]{32})', function ($token){
+    UserController::user_page($token);
+});
+
 $router->run();

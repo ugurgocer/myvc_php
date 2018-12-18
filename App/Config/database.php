@@ -5,6 +5,6 @@ return [
     'dbname'=> 'diyet_takvimi',
     'host'=> '127.0.0.1',
     'port'=> '',
-    'username'=> 'diyet',
-    'password'=> 'Kolay123.'
+    'username'=> 'root',
+    'password'=> ''
 ];

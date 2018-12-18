@@ -26,7 +26,7 @@ class User extends Model{
                       age int NOT NULL,
                       target_weight int NOT NULL,
                       gender boolean default false
-                );
+                ) DEFAULT CHARACTER SET utf8;
             ";
 
             try{
@@ -46,7 +46,7 @@ class User extends Model{
                   FOREIGN KEY (user_id) REFERENCES users (`user_id`),
                   token varchar(32) NOT NULL,
                   expiry_date DATETIME NOT NULL
-                );
+                ) DEFAULT CHARACTER SET utf8;
             ";
 
             try{
