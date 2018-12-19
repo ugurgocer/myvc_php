@@ -22,7 +22,11 @@ $router->post($home_uri.'/cikis', function (){
 });
 
 $router->get($home_uri.'/user/([[:alnum:]]{32})', function ($token){
-    UserController::user_page($token);
+    UserController::userPage($token);
+});
+
+$router->post($home_uri.'/user/update/([[:alnum:]]{32})', function ($token){
+   UserController::editUser($token, $_POST);
 });
 
 $router->run();

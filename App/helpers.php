@@ -27,4 +27,13 @@ class Helpers{
             $values
         ];
     }
+
+    public static function optionToUpdate($option){
+        $sorgu = [];
+        foreach ($option as $key => $value){
+            $sorgu[] = $key . "=:".$key;
+        }
+
+        return implode(', ', $sorgu);
+    }
 }

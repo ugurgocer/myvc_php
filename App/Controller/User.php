@@ -80,11 +80,36 @@ class User {
         }
     }
 
-    public static function user_page($token){
+    public static function userPage($token){
         try{
             $result = (new UserModel())->userRead($token);
 
             return print_r(json_encode(['success'=>true, 'result' => $result, 'message' => 'Bilgileriniz başarıyla getirildi.']));
+        }catch (\Exception $e){
+            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
+        }
+    }
+
+    public static function editUser($token, $option){
+        $inputOption = Helpers::inputFormat($option);
+        $validate = new Validation();
+
+        try{
+            $validate->setItem(@$inputOption['name'])->string()->min(3)->max(50)->run();
+            $validate->setItem(@$inputOption['username'])->string()->min(5)->max(30)->run();
+            $validate->setItem(@$inputOption['surname'])->string()->min(2)->max(100)->run();
+            $validate->setItem(@$inputOption['email'])->notRequired()->email();
+
+            try{
+                $sonuc = (new UserModel())->userUpdate($token, $inputOption);
+
+                return print_r(json_encode(['success'=>true, 'result' => $sonuc, 'message' => 'Kullanıcı bilgileri başarıyla değiştirildi.']));
+            }catch (\PDOException $e){
+                if($e->errorInfo[0] == 23000){
+                    return print_r(json_encode(['success'=>false, 'error' => "Bu kullanıcı adı kullanılıyor."]));
+                }
+                return print_r(json_encode(['success' => false, 'error' => 'Sunucu Hatası']));
+            }
         }catch (\Exception $e){
             printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }

@@ -95,7 +95,9 @@ class User extends Model{
     public function userRead($token){
         try{
             $user_id = $this->isUsable($token);
-            $sorgu = "SELECT * FROM {$this->tableName} WHERE user_id = {$user_id}";
+            $sorgu = "SELECT username, name, surname, height, weight, target_weight, age, target_weight, gender, email FROM {$this->tableName} WHERE user_id = {$user_id}";
+
+
             return $this->db->query($sorgu)->fetchObject();
         }catch (Exception $e){
             return $e;
@@ -106,17 +108,12 @@ class User extends Model{
         try{
             $user_id = $this->isUsable($token);
             try{
-                $sorgu = "UPDATE {$this->tableName} SET";
-                foreach ($option as $key => $value){
-                    $sorgu .= $key . "= :".$key;
-                }
-                $sorgu .=" WHERE user_id = {$user_id}";
-
+                $sorgu = "UPDATE {$this->tableName} SET ".Helpers::optionToUpdate($option)." WHERE user_id={$user_id}";
 
                 $query = $this->db->prepare($sorgu);
                 $query->execute($option);
 
-                return $query->fetchAll();
+                return $this->userRead($token);
             }catch (\PDOException $e){
                 return $e;
             }
