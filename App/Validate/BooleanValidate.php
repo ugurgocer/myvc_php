@@ -20,13 +20,13 @@ class BooleanValidate
     }
 
     public function typeFalse($type){
-        if(Validation::$is_validate)
+        if(Validation::$is_validate && Validation::$required)
             Validation::$is_validate = $type == false;
         return $this->run();
     }
 
     public function typeTrue($type){
-        if(Validation::$is_validate)
+        if(Validation::$is_validate && Validation::$required)
             Validation::$is_validate = $type == true;
         return $this->run();
     }

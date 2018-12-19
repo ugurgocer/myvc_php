@@ -3,7 +3,9 @@
 namespace App\Model;
 
 use App\Core\Model;
+use App\Helpers;
 use App\Migration\User as UserMigration;
+use mysql_xdevapi\Exception;
 
 class User extends Model{
     protected $tableName = "users";
@@ -16,12 +18,10 @@ class User extends Model{
     }
 
     public function createUser($option){
-        $keys = implode(',', array_keys($option));
-
-        $sorgu = "INSERT INTO {$this->tableName} ({$keys})VALUES(:name,:username,:surname,:email,:height,:weight,:target_weight,:gender,:age,:password)";
-
+        $params = Helpers::optionToQuery($option);
         try {
             $this->db->beginTransaction();
+            $sorgu = "INSERT INTO {$this->tableName} ({$params[0]}) VALUES({$params[1]})";
             $this->db->prepare($sorgu)->execute($option);
 
             $token =  md5(uniqid());
@@ -71,6 +71,54 @@ class User extends Model{
             }catch (\PDOException $e){
                 return $e;
             }
+        }
+    }
+
+    public function deleteToken($user_id){
+        $sorgu = "SELECT * FROM {$this->tableName} LEFT JOIN tokens ON tokens.user_id = {$this->tableName}.user_id  WHERE tokens.user_id = {$user_id}";
+
+        $obj = $this->db->query($sorgu)->fetchObject();
+
+        if(!$obj)
+            throw new \PDOException('Kullanıcı Bulunamadı', 330320);
+        else{
+            try{
+                $this->db
+                    ->prepare("DELETE FROM tokens WHERE user_id = :user_id")
+                    ->execute(['user_id' => $user_id]);
+            }catch (\PDOException $e){
+                return $e;
+            }
+        }
+    }
+
+    public function userRead($token){
+        try{
+            $user_id = $this->isUsable($token);
+            $sorgu = "SELECT username, name, surname, height, weight, target_weight, age, target_weight, gender, email FROM {$this->tableName} WHERE user_id = {$user_id}";
+
+
+            return $this->db->query($sorgu)->fetchObject();
+        }catch (Exception $e){
+            return $e;
+        }
+    }
+
+    public function userUpdate($token, $option){
+        try{
+            $user_id = $this->isUsable($token);
+            try{
+                $sorgu = "UPDATE {$this->tableName} SET ".Helpers::optionToUpdate($option)." WHERE user_id={$user_id}";
+
+                $query = $this->db->prepare($sorgu);
+                $query->execute($option);
+
+                return $this->userRead($token);
+            }catch (\PDOException $e){
+                return $e;
+            }
+        }catch (\Exception $e){
+            return $e;
         }
     }
 }

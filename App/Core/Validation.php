@@ -16,6 +16,7 @@ class Validation
 {
     protected static $item;
     public static $is_validate = true;
+    public static $required = false;
 
     public function setItem($item)
     {
@@ -24,32 +25,48 @@ class Validation
         return $this;
     }
 
+    public function Required()
+    {
+        self::$required = true;
+
+        return $this;
+    }
+
+    public function notRequired(){
+        self::$required = false;
+
+        if(isset(self::$item)){
+            self::$required = true;
+        }
+
+        return $this;
+    }
     public function string(){
-        if(self::$is_validate)
+        if(self::$is_validate && self::$required)
             self::$is_validate = is_string(self::$item);
         return new StringValidate(self::$item);
     }
 
     public function integer(){
-        if (self::$is_validate)
+        if(self::$is_validate && self::$required)
             self::$is_validate = ctype_digit(self::$item);
         return new IntValidate(intval(self::$item));
     }
 
     public function email(){
-        if(self::$is_validate)
+        if(self::$is_validate && self::$required)
             self::$is_validate = filter_var(self::$item, FILTER_VALIDATE_EMAIL);
         return self::run();
     }
 
     public function boolean(){
-        if(self::$is_validate)
+        if(self::$is_validate && self::$required)
             self::$is_validate = is_bool(self::$item);
         return new BooleanValidate(self::$item);
     }
 
     public function date(){
-        if(self::$is_validate)
+        if(self::$is_validate && self::$required)
             self::$is_validate = \DateTime::createFromFormat('d-m-Y', self::$item);
         return self::run();
     }

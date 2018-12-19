@@ -20,13 +20,13 @@ class IntValidate
     }
 
     public function min($length){
-        if (Validation::$is_validate)
+        if(Validation::$is_validate && Validation::$required)
             Validation::$is_validate = $this->item >= $length;
         return $this;
     }
 
     public function max($length){
-        if (Validation::$is_validate)
+        if(Validation::$is_validate && Validation::$required)
             Validation::$is_validate = $this->item <= $length;
         return $this;
     }
