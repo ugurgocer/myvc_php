@@ -5,7 +5,6 @@ namespace App\Model;
 use App\Core\Model;
 use App\Helpers;
 use App\Migration\User as UserMigration;
-use mysql_xdevapi\Exception;
 
 class User extends Model{
     protected $tableName = "users";
@@ -99,7 +98,7 @@ class User extends Model{
 
 
             return $this->db->query($sorgu)->fetchObject();
-        }catch (Exception $e){
+        }catch (\Exception $e){
             return $e;
         }
     }

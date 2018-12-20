@@ -2,6 +2,7 @@
 
 use App\Core\Route;
 use App\Controller\User as UserController;
+use App\Controller\FoodCategory as FCController;
 
 $path = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
@@ -31,6 +32,10 @@ $router->get($home_uri.'/user/([[:alnum:]]{32})', function ($token){
 
 $router->post($home_uri.'/user/update/([[:alnum:]]{32})', function ($token){
    UserController::editUser($token, $_POST);
+});
+
+$router->get($home_uri.'/category/([[:alnum:]]{32})', function ($token){
+    FCController::categoryPage($token);
 });
 
 $router->run();

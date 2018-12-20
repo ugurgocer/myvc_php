@@ -32,7 +32,7 @@ class User extends Model{
             try{
                 $this->db->query($sorgu);
             }catch (\PDOException $e){
-                throw new \PDOException();
+                return $e;
             }
         }
     }
@@ -52,7 +52,7 @@ class User extends Model{
             try{
                 $this->db->query($sorgu);
             }catch (\PDOException $e){
-                throw new \PDOException();
+                return $e;
             }
         }
     }

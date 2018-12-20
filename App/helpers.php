@@ -36,4 +36,8 @@ class Helpers{
 
         return implode(', ', $sorgu);
     }
+
+    public static function urlEncode($s){
+        $s = preg_replace('ö','oe', $s);
+    }
 }
