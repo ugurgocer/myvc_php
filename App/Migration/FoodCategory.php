@@ -31,9 +31,9 @@ class FoodCategory extends Model
                 "Çerez ve Çekirdekler",
                 "Çorbalar",
                 "Dilimlenmiş Peynir",
-                "Dip Soslar ve Ezmeler",
+                "Dip Soslar Ezmeler",
                 "Domuz Eti",
-                "Dondurma ve Donmuş Tatlılar",
+                "Dondurma Donmuş Tatlılar",
                 "Et ve Et Ürünleri",
                 "Fast Food",
                 "Geyik ve Av Etleri",
@@ -71,7 +71,7 @@ class FoodCategory extends Model
             $sorgu = "
                 CREATE TABLE {$this->tableName} (
                       category_id int AUTO_INCREMENT PRIMARY KEY,
-                      name varchar(50) NOT NULL UNIQUE
+                      name varchar(200) NOT NULL UNIQUE
                 ) DEFAULT CHARACTER SET utf8;
             ";
 

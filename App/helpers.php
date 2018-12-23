@@ -38,6 +38,15 @@ class Helpers{
     }
 
     public static function urlEncode($s){
-        $s = preg_replace('ö','oe', $s);
+        $s = mb_strtolower($s);
+        $s = str_replace('ö','oe', $s);
+        $s = str_replace('ü', 'ue', $s);
+        $s = str_replace('ş', 's', $s);
+        $s = str_replace('ç', 'c', $s);
+        $s = str_replace('ı', 'i', $s);
+        $s = str_replace(' ', '-', $s);
+        $s = str_replace('ğ', 'g', $s);
+
+        return $s;
     }
 }

@@ -21,9 +21,11 @@ class FoodCategory extends Model
         (new FCMigration())->create();
     }
 
-    public function getCategories($token){
+    public function getCategories($special = false, $token = null){
         try{
-            $this->isUsable($token);
+            if(!$special)
+                $this->isUsable($token);
+
             $sorgu = "SELECT * FROM {$this->tableName}";
 
             return $this->db->query($sorgu)->fetchAll(\PDO::FETCH_ASSOC);

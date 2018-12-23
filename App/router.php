@@ -3,6 +3,7 @@
 use App\Core\Route;
 use App\Controller\User as UserController;
 use App\Controller\FoodCategory as FCController;
+use App\Controller\Food as FoodController;
 
 $path = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
@@ -19,7 +20,7 @@ $router->post($home_uri.'/kayit', function(){
 });
 
 $router->get($home_uri.'/', function() {
-    echo 'Hoşgeldin';
+    echo '';
 });
 
 $router->post($home_uri.'/cikis', function (){
@@ -36,6 +37,10 @@ $router->post($home_uri.'/user/update/([[:alnum:]]{32})', function ($token){
 
 $router->get($home_uri.'/category/([[:alnum:]]{32})', function ($token){
     FCController::categoryPage($token);
+});
+
+$router->get($home_uri.'/food/([[:alnum:]]{32})/([0-9]+)', function ($token, $id){
+   FoodController::foodPageWithCategory($token, $id);
 });
 
 $router->run();

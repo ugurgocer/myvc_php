@@ -59,7 +59,7 @@ class User extends Model{
                 $expiry_date = date('Y-m-d H:i:s', strtotime('+1 month'));
 
                 $this->db
-                    ->prepare('INSERT INTO tokens (user_id, token, expiry_date) VALUES(:user_id, :token, :expiry_date)')
+                    ->prepare('INSERT INTO tokens(user_id, token, expiry_date) VALUES(:user_id, :token, :expiry_date);')
                     ->execute(['user_id' => $user_id, 'token' => $token, 'expiry_date' => $expiry_date]);
 
                 return [

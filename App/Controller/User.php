@@ -9,20 +9,20 @@ use App\Model\User as UserModel;
 class User {
     public static function register($option){
         $inputOption = Helpers::inputFormat($option);
-        $inputOption['gender'] = boolval($inputOption['gender']);
+        @$inputOption['gender'] = @boolval($inputOption['gender']);
         $validate = new Validation();
 
         try{
-            $validate->setItem($inputOption['name'])->string()->min(3)->max(50)->run();
-            $validate->setItem($inputOption['username'])->string()->min(5)->max(30)->run();
-            $validate->setItem($inputOption['surname'])->string()->min(2)->max(100)->run();
-            $validate->setItem($inputOption['email'])->email();
-            $validate->setItem($inputOption['height'])->integer()->min(100)->max(250)->run();
-            $validate->setItem($inputOption['weight'])->integer()->min(25)->run();
-            $validate->setItem($inputOption['target_weight'])->integer()->min(25)->run();
-            $validate->setItem($inputOption['gender'])->boolean()->run();
-            $validate->setItem($inputOption['age'])->integer()->min(13);
-            $validate->setItem($inputOption['password'])->string()->min(8)->max(25)->run();
+            $validate->setItem(@$inputOption['name'])->Required()->string()->min(3)->max(50)->run();
+            $validate->setItem(@$inputOption['username'])->Required()->string()->min(5)->max(30)->run();
+            $validate->setItem(@$inputOption['surname'])->Required()->string()->min(2)->max(100)->run();
+            $validate->setItem(@$inputOption['email'])->Required()->email();
+            $validate->setItem(@$inputOption['height'])->Required()->integer()->min(100)->max(250)->run();
+            $validate->setItem(@$inputOption['weight'])->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['target_weight'])->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['gender'])->boolean()->run();
+            $validate->setItem(@$inputOption['age'])->Required()->integer()->min(13)->run();
+            $validate->setItem(@$inputOption['password'])->Required()->string()->min(8)->max(25)->run();
 
             try{
                 $inputOption['password'] = md5($inputOption['password']);
@@ -47,8 +47,8 @@ class User {
         $validate = new Validation();
 
         try{
-            $validate->setItem($inputOption['username'])->string()->min(5)->max(30)->run();
-            $validate->setItem($inputOption['password'])->string()->min(8)->max(25)->run();
+            $validate->setItem($inputOption['username'])->Required()->string()->min(5)->max(30)->run();
+            $validate->setItem($inputOption['password'])->Required()->string()->min(8)->max(25)->run();
 
             try{
                 $inputOption['password'] = md5($inputOption['password']);

@@ -19,7 +19,6 @@ class FoodCategory
 
             return print_r(json_encode(['success' => true, 'result' => $result, 'message' => 'Kategoriler başarıyla getirildi.']));
         } catch (\Exception $e) {
-            print_r($e);
             printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
