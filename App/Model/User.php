@@ -10,16 +10,18 @@ class User extends Model{
     protected $tableName = "users";
 
     public function __construct(){
-        parent::__construct();
-
         (new UserMigration())->create();
         (new UserMigration())->createSession();
+
+        parent::__construct();
+
     }
 
     public function createUser($option){
         $params = Helpers::optionToQuery($option);
         try {
             $this->db->beginTransaction();
+
             $sorgu = "INSERT INTO {$this->tableName} ({$params[0]}) VALUES({$params[1]})";
             $this->db->prepare($sorgu)->execute($option);
 
@@ -32,11 +34,13 @@ class User extends Model{
                 ->execute(['user_id' => $user_id, 'token' => $token, 'expiry_date' => $expiry_date]);
 
             $this->db->commit();
+
             return [
                 'user_id' => $user_id,
                 'token' => $token,
                 'expiry_date' => $expiry_date
             ];
+
         }catch (\PDOException $e){
             $this->db->rollBack();
             throw $e;
@@ -68,7 +72,7 @@ class User extends Model{
                     'expiry_date' => $expiry_date
                 ];
             }catch (\PDOException $e){
-                return $e;
+                throw $e;
             }
         }
     }
@@ -86,7 +90,7 @@ class User extends Model{
                     ->prepare("DELETE FROM tokens WHERE user_id = :user_id")
                     ->execute(['user_id' => $user_id]);
             }catch (\PDOException $e){
-                return $e;
+                throw $e;
             }
         }
     }
@@ -94,12 +98,12 @@ class User extends Model{
     public function userRead($token){
         try{
             $user_id = $this->isUsable($token);
-            $sorgu = "SELECT username, name, surname, height, weight, target_weight, age, target_weight, gender, email FROM {$this->tableName} WHERE user_id = {$user_id}";
+            $sorgu = "SELECT username, name, surname, height, weight, target_weight, age, target_weight, gender, email, register_date FROM {$this->tableName} WHERE user_id = {$user_id}";
 
 
             return $this->db->query($sorgu)->fetchObject();
         }catch (\Exception $e){
-            return $e;
+            throw $e;
         }
     }
 
@@ -114,10 +118,10 @@ class User extends Model{
 
                 return $this->userRead($token);
             }catch (\PDOException $e){
-                return $e;
+                throw $e;
             }
         }catch (\Exception $e){
-            return $e;
+            throw $e;
         }
     }
 }

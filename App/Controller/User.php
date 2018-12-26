@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Helpers;
 use App\Core\Validation;
 use App\Model\User as UserModel;
+use App\Controller\MealTypes as MTController;
 
 class User {
     public static function register($option){
@@ -28,12 +29,14 @@ class User {
                 $inputOption['password'] = md5($inputOption['password']);
                 $sonuc = (new UserModel())->createUser($inputOption);
 
+                MTController::addTypes($sonuc['user_id'], $inputOption);
+
                 return print_r(json_encode(['success'=>true, 'result' => $sonuc, 'message' => 'Kullanıcı kaydı başarıyla tamamlandı.']));
             }catch (\PDOException $e){
                 if($e->errorInfo[0] == 23000){
                     return print_r(json_encode(['success'=>false, 'error' => "Bu kullanıcı adı kullanılıyor."]));
                 }
-                return print_r(json_encode(['success' => false, 'error' => 'Sunucu Hatası']));
+                return print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
             }
 
         }catch (\Exception $e){
@@ -64,7 +67,7 @@ class User {
             }
 
         }catch (\Exception $e){
-            printf(json_encode(['success' => false, 'error' => $e->getCode()]));
+            print_r(json_encode(['success' => false, 'error' => $e->getCode()]));
         }
     }
 
@@ -76,7 +79,7 @@ class User {
 
             return print_r(json_encode(['success'=>true, 'message' => 'Hesabınızdan çıkış yapıldı.']));
         }catch (\PDOException $e){
-            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
 
@@ -86,7 +89,7 @@ class User {
 
             return print_r(json_encode(['success'=>true, 'result' => $result, 'message' => 'Bilgileriniz başarıyla getirildi.']));
         }catch (\Exception $e){
-            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
 
@@ -111,7 +114,7 @@ class User {
                 return print_r(json_encode(['success' => false, 'error' => 'Sunucu Hatası']));
             }
         }catch (\Exception $e){
-            printf(json_encode(['success' => false, 'error' => $e->getMessage()]));
+            print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
 }

@@ -37,6 +37,26 @@ class Helpers{
         return implode(', ', $sorgu);
     }
 
+    public static function basalMetabolism($gender, $weight, $height, $age){
+        if(!$gender)
+            return (655 + (9.6 * $weight) + (1.8 * $height) - (4.7 * $age));
+        return (66.5 + (13.7 * $weight) + (5 * $height) - (6.7 * $age));
+    }
+
+    public static function idealWeight($gender, $height){
+        if(!$gender)
+            return (45.5 + ((2.3 / 2.54) * ($height - 152.4)));
+        return (50 + ((2.3 / 2.54) * ($height - 152.4)));
+    }
+
+    public static function kgToCalories($weight){
+        return $weight * 7716.1791764707;
+    }
+
+    public static function bodyMassIndex($height, $weight){
+        return $weight / pow(($height / 100), 2);
+    }
+
     public static function urlEncode($s){
         $s = mb_strtolower($s);
         $s = str_replace('ö','oe', $s);

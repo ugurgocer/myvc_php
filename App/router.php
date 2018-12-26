@@ -20,7 +20,7 @@ $router->post($home_uri.'/kayit', function(){
 });
 
 $router->get($home_uri.'/', function() {
-    echo '';
+    echo 'e';
 });
 
 $router->post($home_uri.'/cikis', function (){
@@ -43,4 +43,11 @@ $router->get($home_uri.'/food/([[:alnum:]]{32})/([0-9]+)', function ($token, $id
    FoodController::foodPageWithCategory($token, $id);
 });
 
+$router->get($home_uri.'/food/([[:alnum:]]{32})/([0-9]+)/([0-9]+)', function ($token, $min,$max){
+    FoodController::foodPageWithBetweenCalory($token, $min, $max);
+});
+
+$router->post($home_uri.'/food/([[:alnum:]]{32})', function ($token){
+   FoodController::createFood($token, $_POST);
+});
 $router->run();

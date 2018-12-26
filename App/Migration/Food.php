@@ -23,21 +23,19 @@ class Food extends Model
 
     public function create(){
         if(!$this->existsTable($this->tableName)) {
+            $food = json_decode(file_get_contents('foods.json'));
 
-            $food = [];
-            $category = (new FCModel())->getCategories(true);
-
-            foreach ($category as $value){
-                $food[] = (new Bot($value['category_id'], $value['name']))->getData();
-            }
-
+            //print_r($food);
             $sorgu = "
                 CREATE TABLE {$this->tableName} (
                       food_id int AUTO_INCREMENT PRIMARY KEY,
                       yiyecek varchar(300) NOT NULL,
                       porsiyon int(4) NOT NULL,
+                      porsiyon_unit varchar(300) NOT NULL,
                       kalori int(10) NOT NULL,
-                      kilojul int(10) NOT NULL,
+                      kalori_unit varchar(300) DEFAULT 'kcal',
+                      kilojul int(10),
+                      kilojul_unit varchar(300),
                       category_id int NOT NULL,
                       FOREIGN KEY (category_id) REFERENCES food_category (`category_id`)
                 ) DEFAULT CHARACTER SET utf8;
@@ -45,7 +43,7 @@ class Food extends Model
 
             foreach ($food as $item)
                 foreach ($item as $value)
-                 $query = Helpers::optionToQuery($value);
+                 $query = Helpers::optionToQuery((array)$value);
 
             $insert = "INSERT INTO {$this->tableName} ({$query[0]}) VALUES ({$query[1]});";
 
@@ -56,7 +54,7 @@ class Food extends Model
 
                 foreach ($food as $item)
                     foreach ($item as $value)
-                        $this->db->prepare($insert)->execute($value);
+                        $this->db->prepare($insert)->execute((array)$value);
 
                 $this->db->commit();
             }catch (\PDOException $e){

@@ -17,9 +17,8 @@ class Model{
             $this->db->exec("set names utf8");
             $this->db->exec("CREATE DATABASE IF NOT EXISTS {$this->database['dbname']}");
             $this->db->exec("use {$this->database['dbname']}");
-            return $this->db;
         } catch (PDOException $e) {
-            echo 'Bağlantı kurulamadı: ' . $e->getMessage();
+            throw new \Exception('Bağlantı kurulamadı: ' . $e->getMessage());
         }
     }
 
@@ -35,10 +34,10 @@ class Model{
     public function isUsable($token){
         $sorgu = "SELECT user_id FROM tokens WHERE token = '{$token}'";
 
-        $obj = $this->db->query($sorgu)->fetchObject();
+        $obj = $this->db->query($sorgu)->fetch();
 
-        if(!$obj)
+        if(count($obj) == 0)
             throw new \Exception("İzinsiz işlem");
-        return $obj->user_id;
+        return $obj['user_id'];
     }
 }

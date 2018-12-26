@@ -25,14 +25,16 @@ class User extends Model{
                       email varchar(100) NOT NULL,
                       age int NOT NULL,
                       target_weight int NOT NULL,
-                      gender boolean default false
+                      gender boolean default false,
+                      register_date datetime default current_timestamp
                 ) DEFAULT CHARACTER SET utf8;
             ";
-
             try{
-                $this->db->query($sorgu);
+                $hey = $this->db->prepare($sorgu);
+                $hey->execute();
+                $hey->closeCursor();
             }catch (\PDOException $e){
-                return $e;
+                throw $e;
             }
         }
     }
@@ -50,9 +52,11 @@ class User extends Model{
             ";
 
             try{
-                $this->db->query($sorgu);
+                $hey = $this->db->prepare($sorgu);
+                $hey->execute();
+                $hey->closeCursor();
             }catch (\PDOException $e){
-                return $e;
+                throw $e;
             }
         }
     }

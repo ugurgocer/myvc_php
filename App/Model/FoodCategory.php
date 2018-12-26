@@ -30,7 +30,7 @@ class FoodCategory extends Model
 
             return $this->db->query($sorgu)->fetchAll(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){
-            return $e;
+            throw $e;
         }
     }
 }

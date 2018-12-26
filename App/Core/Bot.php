@@ -15,7 +15,7 @@ class Bot
 {
     protected $table;
     protected $category_id;
-
+    protected $html;
     public function __construct($id, $name)
     {
         libxml_use_internal_errors(true);
@@ -25,13 +25,13 @@ class Bot
         curl_setopt($ct, CURLOPT_HEADER, 0);
         curl_setopt($ct, CURLOPT_RETURNTRANSFER, true);
         $html = curl_exec($ct);
-        curl_close($ct);
-
         $dom = new \DOMDocument();
         $dom->loadHTML($html);
 
         $this->category_id = $id;
         $this->table = $dom->getElementById('calories-table');
+        curl_close($ct);
+
     }
 
     public function getData(){
@@ -55,13 +55,14 @@ class Bot
            $td = [];
            $i = 0;
            foreach ($value->getElementsByTagName('td') as $item){
-               if($item->getElementsByTagName('data')->length)
-                   $td[$this->getIndex()[$i]] = intval($item->getElementsByTagName('data')[0]->nodeValue);
-               else {
+                if($item->getElementsByTagName('data')->length) {
+                    $td[$this->getIndex()[$i]] = floatval($item->getElementsByTagName('data')[0]->nodeValue);
+                    $td[$this->getIndex()[$i].'_unit'] = str_replace($td[$this->getIndex()[$i]]." ", "", $item->nodeValue);
+                }else {
                    $td[$this->getIndex()[$i]] = $item->nodeValue;
                    $td['category_id'] = $this->category_id;
-               }
-               $i++;
+                }
+                $i++;
            }
 
            $tr[] = $td;
