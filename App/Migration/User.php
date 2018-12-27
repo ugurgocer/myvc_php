@@ -45,7 +45,7 @@ class User extends Model{
                 CREATE TABLE tokens (
                   id int AUTO_INCREMENT PRIMARY KEY,
                   user_id int NOT NULL,
-                  FOREIGN KEY (user_id) REFERENCES users (`user_id`),
+                  FOREIGN KEY (user_id) REFERENCES users (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
                   token varchar(32) NOT NULL,
                   expiry_date DATETIME NOT NULL
                 ) DEFAULT CHARACTER SET utf8;

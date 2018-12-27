@@ -37,6 +37,18 @@ class Helpers{
         return implode(', ', $sorgu);
     }
 
+    public static function optionToWhereAndOr($option, $type){
+        $sorgu = [];
+
+        foreach ($option as $value)
+            foreach ($value as $key => $item) {
+                if($key === 'food_id')
+                    $sorgu[] = $key . " = ".$item;
+            }
+
+        return implode($type, array_values($sorgu));
+    }
+
     public static function basalMetabolism($gender, $weight, $height, $age){
         if(!$gender)
             return (655 + (9.6 * $weight) + (1.8 * $height) - (4.7 * $age));

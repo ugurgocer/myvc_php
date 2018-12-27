@@ -28,4 +28,12 @@ class MealTypes
             throw $e;
         }
     }
+
+    public static function readTypes($token){
+        try{
+
+        }catch (\Exception $e){
+
+        }
+    }
 }

@@ -34,7 +34,7 @@ class Model{
     public function isUsable($token){
         $sorgu = "SELECT user_id FROM tokens WHERE token = '{$token}'";
 
-        $obj = $this->db->query($sorgu)->fetch();
+        $obj = $this->db->query($sorgu)->fetch(\PDO::FETCH_ASSOC);
 
         if(count($obj) == 0)
             throw new \Exception("İzinsiz işlem");

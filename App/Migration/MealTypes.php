@@ -27,7 +27,7 @@ class MealTypes extends Model
                       calories int(4) NOT NULL,
                       calories_unit varchar(300) DEFAULT 'kcal',
                       user_id int NOT NULL,
-                      FOREIGN KEY (user_id) REFERENCES users (`user_id`)
+                      FOREIGN KEY (user_id) REFERENCES users (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
                 ) DEFAULT CHARACTER SET utf8;
             ";
 

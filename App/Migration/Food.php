@@ -37,7 +37,7 @@ class Food extends Model
                       kilojul int(10),
                       kilojul_unit varchar(300),
                       category_id int NOT NULL,
-                      FOREIGN KEY (category_id) REFERENCES food_category (`category_id`)
+                      FOREIGN KEY (category_id) REFERENCES food_category (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
                 ) DEFAULT CHARACTER SET utf8;
             ";
 

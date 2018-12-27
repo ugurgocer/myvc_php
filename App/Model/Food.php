@@ -55,7 +55,21 @@ class Food extends Model
 
             $sorgu = "INSERT INTO {$this->tableName} ({$params[0]}) VALUES({$params[1]})";
             $this->db->prepare($sorgu)->execute($option);
+        }catch (\Exception $e){
+            throw $e;
+        }
+    }
 
+    public function searchFood($token, $pattern){
+        try{
+            $this->isUsable($token);
+
+            $sorgu = "SELECT * FROM {$this->tableName} WHERE yiyecek LIKE :pattern";
+
+            $sonuc = $this->db->prepare($sorgu);
+            $sonuc->execute(['pattern' => $pattern]);
+
+            return $sonuc->fetchAll(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){
             throw $e;
         }
