@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Core\Model;
 use App\Helpers;
 use App\Core\Validation;
 use App\Model\User as UserModel;
@@ -14,16 +15,16 @@ class User {
         $validate = new Validation();
 
         try{
-            $validate->setItem(@$inputOption['name'])->Required()->string()->min(3)->max(50)->run();
-            $validate->setItem(@$inputOption['username'])->Required()->string()->min(5)->max(30)->run();
-            $validate->setItem(@$inputOption['surname'])->Required()->string()->min(2)->max(100)->run();
-            $validate->setItem(@$inputOption['email'])->Required()->email();
-            $validate->setItem(@$inputOption['height'])->Required()->integer()->min(100)->max(250)->run();
-            $validate->setItem(@$inputOption['weight'])->Required()->integer()->min(25)->run();
-            $validate->setItem(@$inputOption['target_weight'])->Required()->integer()->min(25)->run();
-            $validate->setItem(@$inputOption['gender'])->boolean()->run();
-            $validate->setItem(@$inputOption['age'])->Required()->integer()->min(13)->run();
-            $validate->setItem(@$inputOption['password'])->Required()->string()->min(8)->max(25)->run();
+            $validate->setItem(@$inputOption['name'], 'Ad')->Required()->string()->min(3)->max(50)->run();
+            $validate->setItem(@$inputOption['username'], 'Kullanıcı Adı')->Required()->string()->alphaNumeric()->min(5)->max(30)->run();
+            $validate->setItem(@$inputOption['surname'], 'Soyad')->Required()->string()->min(2)->max(100)->run();
+            $validate->setItem(@$inputOption['email'], 'E-Posta')->Required()->email();
+            $validate->setItem(@$inputOption['height'], 'Boy')->Required()->integer()->min(100)->max(250)->run();
+            $validate->setItem(@$inputOption['weight'], 'Kilo')->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['target_weight'], 'Hedef Kilo')->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['gender'], 'Cinsiyet')->Required()->boolean()->run();
+            $validate->setItem(@$inputOption['age'], 'Yaş')->Required()->integer()->min(13)->run();
+            $validate->setItem(@$inputOption['password'],'Şifre')->Required()->string()->min(8)->max(25)->run();
 
             try{
                 $inputOption['password'] = md5($inputOption['password']);
@@ -50,8 +51,8 @@ class User {
         $validate = new Validation();
 
         try{
-            $validate->setItem($inputOption['username'])->Required()->string()->min(5)->max(30)->run();
-            $validate->setItem($inputOption['password'])->Required()->string()->min(8)->max(25)->run();
+            $validate->setItem($inputOption['username'], 'Kullanıcı Adı')->Required()->string()->alphaNumeric()->min(5)->max(30)->run();
+            $validate->setItem($inputOption['password'], 'Şifre')->Required()->string()->min(8)->max(25)->run();
 
             try{
                 $inputOption['password'] = md5($inputOption['password']);
@@ -67,7 +68,7 @@ class User {
             }
 
         }catch (\Exception $e){
-            print_r(json_encode(['success' => false, 'error' => $e->getCode()]));
+            print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }
     }
 
@@ -85,7 +86,9 @@ class User {
 
     public static function userPage($token){
         try{
-            $result = (new UserModel())->userRead($token);
+            $user_id = (new Model())->isUsable($token);
+
+            $result = (new UserModel())->userRead($user_id);
 
             return print_r(json_encode(['success'=>true, 'result' => $result, 'message' => 'Bilgileriniz başarıyla getirildi.']));
         }catch (\Exception $e){
@@ -95,23 +98,33 @@ class User {
 
     public static function editUser($token, $option){
         $inputOption = Helpers::inputFormat($option);
+        @$inputOption['gender'] = @boolval($inputOption['gender']);
         $validate = new Validation();
 
         try{
-            $validate->setItem(@$inputOption['name'])->string()->min(3)->max(50)->run();
-            $validate->setItem(@$inputOption['username'])->string()->min(5)->max(30)->run();
-            $validate->setItem(@$inputOption['surname'])->string()->min(2)->max(100)->run();
-            $validate->setItem(@$inputOption['email'])->notRequired()->email();
+            $user_id = (new Model())->isUsable($token);
+
+            $validate->setItem(@$inputOption['name'], 'Ad')->Required()->string()->min(3)->max(50)->run();
+            $validate->setItem(@$inputOption['username'], 'Kullanıcı Adı')->Required()->string()->alphaNumeric()->min(5)->max(30)->run();
+            $validate->setItem(@$inputOption['surname'], 'Soyad')->Required()->string()->min(2)->max(100)->run();
+            $validate->setItem(@$inputOption['email'], 'E-Posta')->Required()->email();
+            $validate->setItem(@$inputOption['height'], 'Boy')->Required()->integer()->min(100)->max(250)->run();
+            $validate->setItem(@$inputOption['weight'], 'Kilo')->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['target_weight'], 'Hedef Kilo')->Required()->integer()->min(25)->run();
+            $validate->setItem(@$inputOption['gender'], 'Cinsiyet')->Required()->boolean()->run();
+            $validate->setItem(@$inputOption['age'], 'Yaş')->Required()->integer()->min(13)->run();
 
             try{
-                $sonuc = (new UserModel())->userUpdate($token, $inputOption);
+                $sonuc = (new UserModel())->userUpdate($user_id, $inputOption);
+
+                MTController::editTypes($user_id, $inputOption);
 
                 return print_r(json_encode(['success'=>true, 'result' => $sonuc, 'message' => 'Kullanıcı bilgileri başarıyla değiştirildi.']));
             }catch (\PDOException $e){
                 if($e->errorInfo[0] == 23000){
                     return print_r(json_encode(['success'=>false, 'error' => "Bu kullanıcı adı kullanılıyor."]));
                 }
-                return print_r(json_encode(['success' => false, 'error' => 'Sunucu Hatası']));
+                return print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
             }
         }catch (\Exception $e){
             print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));

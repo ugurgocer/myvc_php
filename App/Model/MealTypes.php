@@ -38,14 +38,34 @@ class MealTypes extends Model
         }
     }
 
-    public function getTypes($token){
+    public function getTypes($user_id){
         try{
-            $user_id = $this->isUsable($token);
-
-            $sorgu = "SELECT * FROM {$this->tableName} WHERE user_id = {$user_id}";
+            $sorgu = "SELECT  meal_types_id, title, calories FROM {$this->tableName} WHERE user_id = {$user_id}";
 
             return $this->db->query($sorgu)->fetchAll(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){
+            throw $e;
+        }
+    }
+
+    public function updateTypes($user_id, $calory)
+    {
+        try {
+            $this->db
+                ->prepare("UPDATE meal_types SET calories = CASE title 
+                                                  WHEN 'Kahvaltı' THEN :calory2x
+                                                  WHEN 'Öğle Yemeği' THEN :calory2x
+                                                  WHEN 'Akşam Yemeği' THEN :calory2x
+                                                  WHEN '1.Ara Öğün' THEN :calory
+                                                  WHEN '2.Ara Öğün' THEN :calory
+                                                  WHEN '3.Ara Öğün' THEN :calory
+                                                  WHEN '4.Ara Öğün' THEN :calory
+                                                  ELSE title
+                                                  END
+                             WHERE title IN ('Kahvaltı', 'Öğle Yemeği', 'Akşam Yemeği',
+                            '1.Ara Öğün', '2.Ara Öğün', '3.Ara Öğün', '4.Ara Öğün') AND user_id = :user_id;"
+                )->execute(['user_id' => $user_id, 'calory2x' => $calory * 2, 'calory' => $calory]);
+        } catch (\PDOException $e) {
             throw $e;
         }
     }

@@ -52,14 +52,19 @@ class User extends Model{
         $sorgu = "SELECT * FROM {$this->tableName} WHERE username = '{$option['username']}' AND password = '{$option['password']}'";
 
 
-        $obj = $this->db->query($sorgu)->fetchObject();
-
-        if(!$obj)
-            throw new \PDOException('Kullanıcı Bulunamadı', 330320);
-        else{
             try {
-                $token = md5(uniqid());
+                $obj = $this->db->query($sorgu)->fetchObject();
+
+                if (!$obj)
+                    throw new \PDOException('Kullanıcı Bulunamadı', 330320);
+
                 $user_id = $obj->user_id;
+                $is_exist = $this->db->query("SELECT user_id, token, expiry_date FROM tokens WHERE user_id = {$user_id}")->fetch(\PDO::FETCH_ASSOC);
+
+                if(count($is_exist))
+                    return $is_exist;
+
+                $token = md5(uniqid());
                 $expiry_date = date('Y-m-d H:i:s', strtotime('+1 month'));
 
                 $this->db
@@ -71,10 +76,9 @@ class User extends Model{
                     'token' => $token,
                     'expiry_date' => $expiry_date
                 ];
-            }catch (\PDOException $e){
+            } catch (\PDOException $e) {
                 throw $e;
             }
-        }
     }
 
     public function deleteToken($user_id){
@@ -95,28 +99,26 @@ class User extends Model{
         }
     }
 
-    public function userRead($token){
+    public function userRead($user_id){
         try{
-            $user_id = $this->isUsable($token);
-            $sorgu = "SELECT username, name, surname, height, weight, target_weight, age, target_weight, gender, email, register_date FROM {$this->tableName} WHERE user_id = {$user_id}";
+            $sorgu = "SELECT user_id, username, name, surname, height, weight, target_weight, age, target_weight, gender, email, register_date FROM {$this->tableName} WHERE user_id = {$user_id}";
 
 
-            return $this->db->query($sorgu)->fetchObject();
+            return $this->db->query($sorgu)->fetch(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){
             throw $e;
         }
     }
 
-    public function userUpdate($token, $option){
+    public function userUpdate($user_id, $option){
         try{
-            $user_id = $this->isUsable($token);
             try{
                 $sorgu = "UPDATE {$this->tableName} SET ".Helpers::optionToUpdate($option)." WHERE user_id={$user_id}";
 
                 $query = $this->db->prepare($sorgu);
                 $query->execute($option);
 
-                return $this->userRead($token);
+                return $this->userRead($user_id);
             }catch (\PDOException $e){
                 throw $e;
             }

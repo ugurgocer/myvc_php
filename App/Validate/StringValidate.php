@@ -9,7 +9,6 @@
 namespace App\Validate;
 
 use App\Core\Validation;
-use \Exception;
 
 class StringValidate
 {
@@ -22,15 +21,35 @@ class StringValidate
 
     public function min($length)
     {
-        if(Validation::$is_validate && Validation::$required)
+        if(Validation::$is_validate && Validation::$required) {
             Validation::$is_validate = strlen($this->item) >= $length;
+
+            if (!Validation::$is_validate)
+                Validation::$error = "alanının uzunluğu en az {$length} karakter olmalıdır.";
+        }
         return $this;
     }
 
     public function max($length)
     {
-        if(Validation::$is_validate && Validation::$required)
+        if(Validation::$is_validate && Validation::$required){
             Validation::$is_validate = strlen($this->item) <= $length;
+
+            if (!Validation::$is_validate)
+                Validation::$error = "alanının uzunluğu en fazla {$length} karakter olmalıdır.";
+
+        }
+        return $this;
+    }
+
+    public function alphaNumeric(){
+        if(Validation::$is_validate && Validation::$required) {
+            Validation::$is_validate = ctype_alnum($this->item);
+
+            if (!Validation::$is_validate)
+                Validation::$error = "alanı yalnızca sayılardan ve harflerden oluşmalıdır.";
+        }
+
         return $this;
     }
 
@@ -38,9 +57,10 @@ class StringValidate
      * @return bool
      * @throws Exception
      */
+
     public function run(){
         if(!Validation::$is_validate)
-            throw new \Exception($this->item."not valid string value.");
+            throw new \Exception(Validation::$name." ".Validation::$error);
         return Validation::$is_validate;
     }
 }

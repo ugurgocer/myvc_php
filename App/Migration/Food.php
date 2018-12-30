@@ -8,10 +8,8 @@
 
 namespace App\Migration;
 
-use App\Core\Bot;
 use App\Core\Model;
 use App\Helpers;
-use App\Model\FoodCategory as FCModel;
 
 class Food extends Model
 {
@@ -23,27 +21,33 @@ class Food extends Model
 
     public function create(){
         if(!$this->existsTable($this->tableName)) {
-            $food = json_decode(file_get_contents('foods.json'));
+            $food = json_decode(file_get_contents('foods.json'), true);
 
-            //print_r($food);
             $sorgu = "
                 CREATE TABLE {$this->tableName} (
                       food_id int AUTO_INCREMENT PRIMARY KEY,
                       yiyecek varchar(300) NOT NULL,
-                      porsiyon int(4) NOT NULL,
-                      porsiyon_unit varchar(300) NOT NULL,
-                      kalori int(10) NOT NULL,
-                      kalori_unit varchar(300) DEFAULT 'kcal',
-                      kilojul int(10),
-                      kilojul_unit varchar(300),
-                      category_id int NOT NULL,
-                      FOREIGN KEY (category_id) REFERENCES food_category (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
+                      porsiyon int(4) DEFAULT 100,
+                      porsiyon_unit varchar(300),
+                      kalori int(10) NOT NULL
                 ) DEFAULT CHARACTER SET utf8;
             ";
 
-            foreach ($food as $item)
-                foreach ($item as $value)
-                 $query = Helpers::optionToQuery((array)$value);
+            foreach ($food as $ke => $item) {
+                foreach ($item as $key => $value) {
+                    $value['porsiyon'] = 100;
+                    unset($value['category_id']);
+                    unset($value['kilojul']);
+                    unset($value['kilojul_unit']);
+                    unset($value['kalori_unit']);
+                    $indexOf = strpos($value['porsiyon_unit'], '(');
+                    $value['porsiyon_unit'] = substr($value['porsiyon_unit'], $indexOf+1, strlen($value['porsiyon_unit']) - 2 - $indexOf);
+                    $query = Helpers::optionToQuery((array)$value);
+
+                    $item[$key] = $value;
+                }
+                $food[$ke] = $item;
+            }
 
             $insert = "INSERT INTO {$this->tableName} ({$query[0]}) VALUES ({$query[1]});";
 

@@ -11,7 +11,6 @@ namespace App\Model;
 use App\Core\Model;
 use App\Helpers;
 use App\Migration\Food as FoodMigration;
-use App\Migration\FoodCategory as FCMigration;
 
 class Food extends Model
 {
@@ -21,13 +20,11 @@ class Food extends Model
         parent::__construct();
 
         (new FoodMigration())->create();
-        (new FCMigration())->create();
     }
 
-    public function getFoodWithCategoryID($token, $id){
+    public function getFoodWithCaloryInterval($min, $max){
         try{
-            $this->isUsable($token);
-            $sorgu = "SELECT * FROM {$this->tableName} as f INNER JOIN food_category as fc ON fc.category_id = f.category_id WHERE f.category_id = {$id}";
+            $sorgu = "SELECT * FROM {$this->tableName} as f WHERE f.kalori BETWEEN {$min} AND {$max}";
 
             return $this->db->query($sorgu)->fetchAll(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){
@@ -35,24 +32,13 @@ class Food extends Model
         }
     }
 
-    public function getFoodWithCaloryInterval($token, $min, $max){
-        try{
-            $this->isUsable($token);
-
-            $sorgu = "SELECT * FROM {$this->tableName} as f INNER JOIN food_category as fc ON fc.category_id = f.category_id WHERE f.kalori BETWEEN {$min} AND {$max}";
-
-            return $this->db->query($sorgu)->fetchAll(\PDO::FETCH_ASSOC);
-        }catch (\Exception $e){
-            throw $e;
-        }
-    }
-
-    public function insertFood($token, $option){
+    public function insertFood($option){
         $params = Helpers::optionToQuery($option);
 
+        $is_exist = "SELECT count(*) as t FROM {$this->tableName} WHERE yiyecek = '{$option['yiyecek']}' AND kalori = {$option['kalori']}"
 ;        try{
-            $this->isUsable($token);
-
+            if($this->db->query($is_exist)->fetch()['t'])
+                throw new \Exception('Girmek istediğiniz yemek veri tabanımızda vardır.');
             $sorgu = "INSERT INTO {$this->tableName} ({$params[0]}) VALUES({$params[1]})";
             $this->db->prepare($sorgu)->execute($option);
         }catch (\Exception $e){
@@ -60,14 +46,12 @@ class Food extends Model
         }
     }
 
-    public function searchFood($token, $pattern){
+    public function searchFood($pattern){
         try{
-            $this->isUsable($token);
-
             $sorgu = "SELECT * FROM {$this->tableName} WHERE yiyecek LIKE :pattern";
 
             $sonuc = $this->db->prepare($sorgu);
-            $sonuc->execute(['pattern' => $pattern]);
+            $sonuc->execute(['pattern' => '%'.$pattern.'%']);
 
             return $sonuc->fetchAll(\PDO::FETCH_ASSOC);
         }catch (\Exception $e){

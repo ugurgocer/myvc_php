@@ -33,7 +33,7 @@ class BooleanValidate
 
     public function run(){
         if(!Validation::$is_validate)
-            throw new \Exception($this->item."not valid boolean value.");
+            throw new \Exception(Validation::$name." ".Validation::$error);
         return Validation::$is_validate;
     }
 }

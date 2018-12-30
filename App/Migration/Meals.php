@@ -24,7 +24,6 @@ class Meals extends Model
                       meal_id int AUTO_INCREMENT PRIMARY KEY,
                       meal_types_id int NOT NULL,
                       total_calories int NOT NULL,
-                      calories_unit varchar(300) DEFAULT 'kcal',
                       user_id int NOT NULL,
                       creation_date DATE NOT NULL,
                       FOREIGN KEY (user_id) REFERENCES users (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
