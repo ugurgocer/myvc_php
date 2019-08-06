@@ -32,9 +32,9 @@ class Meals
                 $validate->setItem($item['amount'], 'Miktar')->Required()->integer()->min(1)->run();
             }
 
-            (new MealsModel())->insertMeal($user_id, $inputOption, $meal_foods);
+            $result = (new MealsModel())->insertMeal($user_id, $inputOption, $meal_foods);
 
-            return print_r(json_encode(['success' => true, 'message' => 'Öğün başarıyla kaydedildi']));
+            return print_r(json_encode(['success' => true, 'result'=>$result, 'message' => 'Öğün başarıyla kaydedildi']));
         }catch (\Exception $e){
             print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
         }

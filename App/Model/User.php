@@ -59,9 +59,9 @@ class User extends Model{
                     throw new \PDOException('Kullanıcı Bulunamadı', 330320);
 
                 $user_id = $obj->user_id;
-                $is_exist = $this->db->query("SELECT user_id, token, expiry_date FROM tokens WHERE user_id = {$user_id}")->fetch(\PDO::FETCH_ASSOC);
+                $is_exist = $this->db->query("SELECT user_id, token, expiry_date FROM tokens WHERE user_id = {$user_id}")->fetchObject();
 
-                if(count($is_exist))
+                if($is_exist)
                     return $is_exist;
 
                 $token = md5(uniqid());

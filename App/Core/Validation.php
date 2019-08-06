@@ -59,11 +59,11 @@ class Validation
 
     public function integer(){
         if(self::$is_validate && self::$required){
-            self::$is_validate = ctype_digit(self::$item);
+            self::$is_validate = filter_var(floatval(self::$item), FILTER_VALIDATE_FLOAT);
             if (!self::$is_validate)
                 self::$error = 'alanı sayısal olmalıdır.';
         }
-        return new IntValidate(intval(self::$item));
+        return new IntValidate(floatval(self::$item));
     }
 
     public function email(){

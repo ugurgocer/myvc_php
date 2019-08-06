@@ -65,6 +65,8 @@ class Meals extends Model
             }
 
             $this->db->commit();
+            
+            return ['meal_id' => $meal_id];
         } catch (\Exception $e) {
             $this->db->rollBack();
             throw $e;
@@ -118,6 +120,24 @@ class Meals extends Model
                 INNER JOIN foods as f ON f.food_id = mf.food_id
                 WHERE mf.meal_id = {$meal_id}
             ")->fetchAll(\PDO::FETCH_ASSOC);
+
+            return $meals;
+        }catch (\Exception $e){
+            throw $e;
+        }
+    }
+    
+    public function isExists($user_id, $meal_types_id){
+        try{
+            $sorgu = "
+                SELECT *
+                FROM {$this->tableName}
+                WHERE user_id = :user_id AND meal_types_id = :meal_types_id AND creation_date = :date
+            ";
+
+            $meals = $this->db->prepare($sorgu);
+            $meals->execute(['user_id' => $user_id, 'meal_types_id' => $meal_types_id, 'date' => date("Y-m-d")]);
+            $meals = $meals->fetch(\PDO::FETCH_ASSOC);
 
             return $meals;
         }catch (\Exception $e){

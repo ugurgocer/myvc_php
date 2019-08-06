@@ -73,7 +73,7 @@ class Food
         try{
             (new Model())->isUsable($token);
 
-            $validate->setItem($inputOption['pattern'], 'Aranan ifade')->Required()->string()->min(3)->run();
+            $validate->setItem($inputOption['pattern'], 'Aranan ifade')->Required()->string()->min(2)->run();
 
             $result = (new FoodModel())->searchFood($inputOption['pattern']);
 

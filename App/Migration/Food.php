@@ -29,7 +29,7 @@ class Food extends Model
                       yiyecek varchar(300) NOT NULL,
                       porsiyon int(4) DEFAULT 100,
                       porsiyon_unit varchar(300),
-                      kalori int(10) NOT NULL
+                      kalori float(10, 2) NOT NULL
                 ) DEFAULT CHARACTER SET utf8;
             ";
 

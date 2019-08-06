@@ -2,7 +2,6 @@
 
 use App\Core\Route;
 use App\Controller\User as UserController;
-use App\Controller\FoodCategory as FCController;
 use App\Controller\Food as FoodController;
 use App\Controller\Meals as MealsController;
 use App\Controller\MealTypes as MTController;
@@ -11,7 +10,7 @@ use App\Controller\Calculaties;
 $path = $_SERVER['REQUEST_URI'];
 $method = $_SERVER['REQUEST_METHOD'];
 
-$home_uri = "/diyet_takvimi";
+$home_uri = "";
 $router = new Route($path, $method);
 
 //ANASAYFA

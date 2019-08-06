@@ -34,7 +34,7 @@ class Calculaties
                 $inputOption['age']
             );
 
-            $inputOption['basal-metabolism'] = $result;
+            $inputOption['basal-metabolism'] = number_format($result, 2);
             $inputOption['gender'] = $inputOption['gender'] ? 'Erkek' : 'Kadın';
             return print_r(json_encode(['success' => true, 'result' => $inputOption, 'message' => 'Bazal Metabolizma hesaplandı']));
         } catch (\Exception $e) {
@@ -58,7 +58,7 @@ class Calculaties
                 $inputOption['height']
             );
 
-            $inputOption['ideal-weight'] = $result;
+            $inputOption['ideal-weight'] = number_format($result, 2);
             $inputOption['gender'] = $inputOption['gender'] ? 'Erkek' : 'Kadın';
             return print_r(json_encode(['success' => true, 'result' => $inputOption, 'message' => 'İdeal Kilo hesaplandı']));
         } catch (\Exception $e) {
@@ -70,7 +70,6 @@ class Calculaties
     {
         $validate = new Validation();
         $inputOption = Helpers::inputFormat($option);
-        @$inputOption['gender'] = boolval($inputOption['gender']);
         try {
             (new Model)->isUsable($token);
 
@@ -82,7 +81,7 @@ class Calculaties
                 $inputOption['weight']
             );
 
-            $inputOption['body-mass-index'] = $result;
+            $inputOption['body-mass-index'] = number_format($result, 2);
             return print_r(json_encode(['success' => true, 'result' => $inputOption, 'message' => 'Boy Kilo Endeksi Hesaplandı']));
         } catch (\Exception $e) {
             print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
@@ -103,7 +102,7 @@ class Calculaties
                 $inputOption['weight']
             );
 
-            $inputOption['calories'] = $result;
+            $inputOption['calories'] = number_format($result, 2);
             return print_r(json_encode(['success' => true, 'result' => $inputOption, 'message' => 'Kilonuz kalori değerine çevirildi']));
         } catch (\Exception $e) {
             print_r(json_encode(['success' => false, 'error' => $e->getMessage()]));
